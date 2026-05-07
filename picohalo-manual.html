@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PicoHalo — User Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:       #0a0a0a;
+    --surface:  #111111;
+    --surface2: #1a1a1a;
+    --border:   #2a2a2a;
+    --accent:   #00e5ff;
+    --accent2:  #7c5cfc;
+    --warn:     #ff6b35;
+    --text:     #e8e8e8;
+    --muted:    #777;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ---- SCAN-LINE OVERLAY ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ---- SIDEBAR NAV ---- */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .nav-version {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin: 1.25rem 0 0.5rem;
+  }
+
+  nav a {
+    display: block;
+    font-size: 13.5px;
+    color: #aaa;
+    text-decoration: none;
+    padding: 5px 0 5px 12px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    font-weight: 400;
+  }
+
+  nav a:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ---- MAIN ---- */
+  main {
+    margin-left: 260px;
+    padding: 4rem 4rem 6rem;
+    max-width: 860px;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    margin-bottom: 5rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-family: var(--mono);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .hero h1 span {
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: #aaa;
+    font-weight: 300;
+    max-width: 540px;
+    margin-bottom: 2rem;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-cyan   { color: var(--accent);  border-color: rgba(0,229,255,0.3);  background: rgba(0,229,255,0.05); }
+  .badge-purple { color: #a78bfa;        border-color: rgba(124,92,252,0.3); background: rgba(124,92,252,0.05); }
+  .badge-warn   { color: var(--warn);    border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.05); }
+
+  /* ---- SECTIONS ---- */
+  section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 3rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 2rem 0 0.6rem;
+    letter-spacing: 0.01em;
+  }
+
+  p {
+    color: #bbb;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4rem 0;
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-accent {
+    border-left: 3px solid var(--accent);
+  }
+
+  .card-warn {
+    border-left: 3px solid var(--warn);
+    background: rgba(255,107,53,0.03);
+  }
+
+  .card-purple {
+    border-left: 3px solid var(--accent2);
+  }
+
+  /* ---- PIN TABLE ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: var(--mono);
+    margin: 1.5rem 0;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #ccc;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td:first-child { color: var(--accent); font-weight: 700; }
+  td:nth-child(2) { color: #888; }
+
+  /* ---- CODE ---- */
+  code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    margin: 1rem 0 1.5rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.6;
+  }
+
+  pre .kw  { color: var(--accent2); }
+  pre .def { color: var(--accent); }
+  pre .val { color: #f9a875; }
+  pre .cmt { color: #555; font-style: italic; }
+
+  /* ---- SPEC GRID ---- */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .spec-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .spec-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .spec-value {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .spec-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ---- BOARDS GRID ---- */
+  .boards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .board-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .board-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .board-card.wifi::before  { background: var(--accent2); }
+
+  .board-card:hover { border-color: rgba(0,229,255,0.3); }
+
+  .board-name {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .board-chip {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .board-feature {
+    font-size: 11.5px;
+    color: #aaa;
+    line-height: 1.7;
+  }
+
+  .wifi-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: rgba(124,92,252,0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(124,92,252,0.3);
+    margin-top: 0.5rem;
+  }
+
+  /* ---- STEPS ---- */
+  .steps { list-style: none; counter-reset: step; }
+
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1.25rem;
+    color: #bbb;
+    font-weight: 300;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ---- ALERT BOX ---- */
+  .alert {
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+    font-size: 14px;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .alert-warn {
+    background: rgba(255,107,53,0.07);
+    border: 1px solid rgba(255,107,53,0.25);
+    color: #f5a57a;
+  }
+
+  .alert-info {
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: #80dff0;
+  }
+
+  .alert-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ---- RANGE TABLE ---- */
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .range-row:last-child { border-bottom: none; }
+
+  .range-label {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 110px;
+  }
+
+  .range-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .range-bar {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #00e5ff44, #00e5ff);
+  }
+
+  .range-values {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    margin-left: 260px;
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 800px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 2rem 1.5rem 4rem; }
+    footer { margin-left: 0; padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav>
+  <div class="nav-logo">PicoHalo</div>
+  <div class="nav-version">User Manual · v1.0</div>
+
+  <div class="nav-section-label">Getting Started</div>
+  <a href="#overview">Overview</a>
+  <a href="#supported-boards">Supported Boards</a>
+  <a href="#hardware">Hardware & Wiring</a>
+
+  <div class="nav-section-label">Setup</div>
+  <a href="#flashing">Flashing Firmware</a>
+  <a href="#libraries">Libraries</a>
+  <a href="#temperature-unit">Temperature Unit</a>
+
+  <div class="nav-section-label">Using PicoHalo</div>
+  <a href="#boot">Boot Screen</a>
+  <a href="#eye-face">Eye Display</a>
+  <a href="#sensor-page">Sensor Page</a>
+  <a href="#notifications">Alerts & Notifications</a>
+  <a href="#led-ring">LED Ring</a>
+
+  <div class="nav-section-label">Reference</div>
+  <a href="#safe-ranges">Safe Ranges</a>
+  <a href="#pin-map">Pin Map</a>
+  <a href="#troubleshooting">Troubleshooting</a>
+  <a href="#faq">FAQ</a>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">// User Manual · v1.0</div>
+    <h1>Pico<span>HALO</span></h1>
+    <p class="hero-sub">An ambient environmental display with animated eyes, sensor readouts, and LED ring — built on the Raspberry Pi Pico family.</p>
+    <div class="badge-row">
+      <span class="badge badge-cyan">GC9A01A Round Display</span>
+      <span class="badge badge-cyan">AHT20 · BMP280</span>
+      <span class="badge badge-cyan">NeoPixel Ring × 16</span>
+      <span class="badge badge-purple">Pico / Pico W / Pico 2 / Pico 2W</span>
+      <span class="badge badge-warn">Touch Sensor</span>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-label">01 — Overview</div>
+    <h2>What is PicoHalo?</h2>
+    <p>PicoHalo is an open-source ambient environmental display firmware for the Raspberry Pi Pico family. It combines a 240 mm round GC9A01A TFT display, an AHT20 humidity/temperature sensor, a BMP280 pressure/temperature sensor, and a 16-LED NeoPixel ring into one cohesive device.</p>
+    <p>The display animates a pair of blinking eyes, shows random messages, and displays live sensor data on touch. The LED ring shifts through rainbow colors under normal conditions and turns solid red or blue to warn you when temperature, humidity, or pressure fall outside safe ranges.</p>
+
+    <div class="spec-grid">
+      <div class="spec-item">
+        <div class="spec-label">Display</div>
+        <div class="spec-value">240px</div>
+        <div class="spec-sub">Round GC9A01A TFT via SPI</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Temp sensor</div>
+        <div class="spec-value">AHT20</div>
+        <div class="spec-sub">±0.3°C, I²C</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Pressure sensor</div>
+        <div class="spec-value">BMP280</div>
+        <div class="spec-sub">hPa + temp, I²C @ 0x77</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">LED ring</div>
+        <div class="spec-value">16× RGB</div>
+        <div class="spec-sub">WS2812 NeoPixel</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Sensor update</div>
+        <div class="spec-value">3 s</div>
+        <div class="spec-sub">Interval (configurable)</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Display refresh</div>
+        <div class="spec-value">5 s</div>
+        <div class="spec-sub">Sensor page only</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SUPPORTED BOARDS -->
+  <section id="supported-boards">
+    <div class="section-label">02 — Boards</div>
+    <h2>Supported Boards</h2>
+    <p>PicoHalo ships as four separate firmware files — one per board variant. Pick the file that matches your hardware exactly.</p>
+
+    <div class="boards-grid">
+      <div class="board-card">
+        <div class="board-name">Pico</div>
+        <div class="board-chip">RP2040 · 264 KB SRAM</div>
+        <div class="board-feature">Original board. No wireless. All PicoHalo features fully supported.</div>
+      </div>
+      <div class="board-card wifi">
+        <div class="board-name">Pico W</div>
+        <div class="board-chip">RP2040 · CYW43439</div>
+        <div class="board-feature">Wi-Fi &amp; Bluetooth capable. Same PicoHalo features, wireless reserved for future use.</div>
+        <div class="wifi-badge">Wi-Fi Ready</div>
+      </div>
+      <div class="board-card">
+        <div class="board-name">Pico 2</div>
+        <div class="board-chip">RP2350 · 520 KB SRAM</div>
+        <div class="board-feature">Faster dual-core ARM/RISC-V. Improved rendering. No wireless.</div>
+      </div>
+      <div class="board-card wifi">
+        <div class="board-name">Pico 2W</div>
+        <div class="board-chip">RP2350 · CYW43439</div>
+        <div class="board-feature">Most capable variant. Faster CPU + Wi-Fi/BT. Best choice for future expansions.</div>
+        <div class="wifi-badge">Wi-Fi Ready</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>All four board variants run identical PicoHalo features at v1.0. The firmware files differ only in the internal board target (chip variant, pin mapping). Do <strong>not</strong> flash a Pico 2 file onto a Pico — it will not boot.</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HARDWARE -->
+  <section id="hardware">
+    <div class="section-label">03 — Hardware</div>
+    <h2>Hardware & Wiring</h2>
+    <p>All connections below reference the <strong>Pico</strong> pin numbering (GP numbers). The same GP numbers apply to all four board variants — the physical pin locations are identical.</p>
+
+    <h3>Display (SPI)</h3>
+    <table>
+      <thead><tr><th>Pico GP</th><th>Display Pin</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>GP18</td><td>SCK / CLK</td><td>SPI clock</td></tr>
+        <tr><td>GP19</td><td>MOSI / DIN</td><td>SPI data</td></tr>
+        <tr><td>GP17</td><td>DC</td><td>Data / command select</td></tr>
+        <tr><td>GP16</td><td>RST</td><td>Reset line</td></tr>
+        <tr><td>GP20</td><td>CS</td><td>Chip select</td></tr>
+        <tr><td>3V3</td><td>VCC</td><td>3.3 V power</td></tr>
+        <tr><td>GND</td><td>GND</td><td>Ground</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Sensors (I²C)</h3>
+    <table>
+      <thead><tr><th>Pico GP</th><th>Sensor Pin</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>GP4</td><td>SDA</td><td>Shared I²C data bus</td></tr>
+        <tr><td>GP5</td><td>SCL</td><td>Shared I²C clock bus</td></tr>
+        <tr><td>3V3</td><td>VIN / VCC</td><td>Both sensors on 3.3 V</td></tr>
+        <tr><td>GND</td><td>GND</td><td>Common ground</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span>The BMP280 must be configured for I²C address <code>0x77</code>. If your module has the SDO pin floating or pulled low, it will use <code>0x76</code> and fail to initialize. Pull SDO high (3.3 V) via a 10 kΩ resistor to force <code>0x77</code>.</span>
+    </div>
+
+    <h3>LED Ring & Touch</h3>
+    <table>
+      <thead><tr><th>Pico GP</th><th>Component</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>GP15</td><td>NeoPixel Data</td><td>5 V ring, level-shift recommended</td></tr>
+        <tr><td>GP22</td><td>Touch Sensor</td><td>Capacitive — digital HIGH on touch</td></tr>
+        <tr><td>VBUS / 5 V</td><td>NeoPixel VCC</td><td>Use 5 V for full brightness</td></tr>
+        <tr><td>GND</td><td>NeoPixel GND</td><td>Common ground with Pico</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FLASHING -->
+  <section id="flashing">
+    <div class="section-label">04 — Setup</div>
+    <h2>Flashing Firmware</h2>
+    <p>There are two ways to flash PicoHalo: using the online Web Flasher (easiest, no software install), or manually using the Arduino IDE or Thonny.</p>
+
+    <h3>Method A — Web Flasher (Recommended)</h3>
+    <ol class="steps">
+      <li>Visit the PicoHalo Web Flasher at the link provided in the repository README.</li>
+      <li>Select your board variant (Pico / Pico W / Pico 2 / Pico 2W) and your preferred temperature unit (°C or °F).</li>
+      <li>Hold the <strong>BOOTSEL</strong> button on your Pico and plug it into your computer via USB while holding the button. Release once plugged in.</li>
+      <li>Your Pico will appear as a USB drive called <code>RPI-RP2</code> (or <code>RP2350</code> for Pico 2). Click <strong>Flash</strong> in the web flasher.</li>
+      <li>The flasher will upload the firmware. When it completes, the Pico reboots and PicoHalo starts automatically.</li>
+    </ol>
+
+    <h3>Method B — Manual (Arduino IDE)</h3>
+    <ol class="steps">
+      <li>Install the <strong>Arduino IDE 2.x</strong> from arduino.cc.</li>
+      <li>In Arduino IDE, go to <strong>File → Preferences</strong> and add the Pico board URL to "Additional boards manager URLs":<br /><code>https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json</code></li>
+      <li>Go to <strong>Tools → Board → Boards Manager</strong>, search for <code>Raspberry Pi Pico/RP2040</code> and install it.</li>
+      <li>Install all required libraries via <strong>Sketch → Include Library → Manage Libraries</strong> (see Libraries section below).</li>
+      <li>Open the <code>.ino</code> file for your board variant from the repository. Select your board under <strong>Tools → Board</strong>.</li>
+      <li>Set <code>USE_FAHRENHEIT</code> to <code>true</code> in the source if you want °F. Connect your Pico and click <strong>Upload</strong>.</li>
+    </ol>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- LIBRARIES -->
+  <section id="libraries">
+    <div class="section-label">05 — Libraries</div>
+    <h2>Required Libraries</h2>
+    <p>Install all five libraries via the Arduino Library Manager before compiling. Search the exact names shown below.</p>
+
+    <table>
+      <thead><tr><th>Library</th><th>Author</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Adafruit GFX Library</td><td>Adafruit</td><td>Graphics primitives for the display</td></tr>
+        <tr><td>Adafruit GC9A01A</td><td>Adafruit</td><td>Round TFT display driver</td></tr>
+        <tr><td>Adafruit AHTX0</td><td>Adafruit</td><td>AHT20 temperature &amp; humidity</td></tr>
+        <tr><td>Adafruit BMP280 Library</td><td>Adafruit</td><td>BMP280 pressure &amp; temperature</td></tr>
+        <tr><td>Adafruit NeoPixel</td><td>Adafruit</td><td>WS2812 LED ring control</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>The Adafruit GFX Library and BusIO are dependencies of the other Adafruit libraries. The IDE will offer to install them automatically — accept when prompted.</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TEMPERATURE UNIT -->
+  <section id="temperature-unit">
+    <div class="section-label">06 — Configuration</div>
+    <h2>Choosing °C or °F</h2>
+    <p>PicoHalo ships as two separate firmware variants per board: one Celsius, one Fahrenheit. If you use the Web Flasher, simply select your preference from the dropdown — no code changes needed.</p>
+    <p>If you compile manually, locate the following line near the top of the <code>.ino</code> file and change it:</p>
+    <pre><span class="cmt">// Set to true for Fahrenheit, false for Celsius</span>
+<span class="kw">#define</span> <span class="def">USE_FAHRENHEIT</span> <span class="val">false</span></pre>
+    <p>Temperature <strong>alerts</strong> always compare against Celsius safe ranges internally regardless of the display unit. The display correctly converts to °F when <code>USE_FAHRENHEIT</code> is <code>true</code>.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- BOOT SCREEN -->
+  <section id="boot">
+    <div class="section-label">07 — Usage</div>
+    <h2>Boot Screen</h2>
+    <p>On power-up, PicoHalo displays a boot screen for approximately <strong>5 seconds</strong>. During boot:</p>
+    <ul style="color:#bbb; font-weight:300; padding-left:1.5rem; line-height:2;">
+      <li>The display shows "Pico HALO v1" and a loading progress bar.</li>
+      <li>The LED ring cycles through rainbow colors while loading.</li>
+      <li>Sensors are initialized in the background.</li>
+    </ul>
+    <p>After 5 seconds the eye display appears automatically and normal operation begins.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- EYE FACE -->
+  <section id="eye-face">
+    <div class="section-label">08 — Usage</div>
+    <h2>Eye Display (Home Screen)</h2>
+    <p>The default display shows two animated white eyes on a black background. PicoHalo's eye behaviors:</p>
+
+    <div class="card card-accent" style="margin-bottom:0.75rem;">
+      <h3 style="margin-top:0; color: var(--accent);">Blinking</h3>
+      <p style="margin-bottom:0;">Eyes blink automatically every 3–6 seconds (random interval). Each blink lasts 200 ms. Timing is randomized to feel natural.</p>
+    </div>
+    <div class="card card-purple" style="margin-bottom:0.75rem;">
+      <h3 style="margin-top:0; color: #a78bfa;">Random Messages</h3>
+      <p style="margin-bottom:0;">Every 1–3 minutes, the display clears and shows a short motivational message centered on screen (cyan text). After 5 seconds the eyes return automatically.</p>
+    </div>
+    <div class="card card-warn">
+      <h3 style="margin-top:0; color: var(--warn);">Alert Overlay</h3>
+      <p style="margin-bottom:0;">If a sensor value leaves the safe range, a colored notification box appears at the bottom of the eye screen. It stays visible for up to 2 minutes. The LED ring also switches to solid red (too high) or solid blue (too low).</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SENSOR PAGE -->
+  <section id="sensor-page">
+    <div class="section-label">09 — Usage</div>
+    <h2>Sensor Data Page</h2>
+    <p>Tap the <strong>capacitive touch sensor</strong> (GP22) once to toggle between the eye display and the sensor data page. Tap again to return to the eye display.</p>
+    <p>The sensor page shows three labeled boxes with live readings:</p>
+
+    <table>
+      <thead><tr><th>Reading</th><th>Source</th><th>Update rate</th></tr></thead>
+      <tbody>
+        <tr><td>Temperature</td><td>AHT20</td><td>Every 5 s (display) / 3 s (internal)</td></tr>
+        <tr><td>Humidity</td><td>AHT20</td><td>Every 5 s (display) / 3 s (internal)</td></tr>
+        <tr><td>Pressure</td><td>BMP280</td><td>Every 5 s (display) / 3 s (internal)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ</span>
+      <span>Sensor values are sampled every 3 seconds internally. The on-screen display refreshes every 5 seconds to reduce flicker. Range checks and LED alerts happen at the 3-second sample rate even when the sensor page is not visible.</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- NOTIFICATIONS -->
+  <section id="notifications">
+    <div class="section-label">10 — Alerts</div>
+    <h2>Alerts & Notifications</h2>
+    <p>PicoHalo monitors sensor values against configurable safe ranges. When a value goes out of range:</p>
+    <ul style="color:#bbb; font-weight:300; padding-left:1.5rem; line-height:2.2;">
+      <li>A notification box appears at the bottom of the eye screen (colored border + text).</li>
+      <li>The LED ring turns <strong style="color:#f77">solid red</strong> for "too high" alerts.</li>
+      <li>The LED ring turns <strong style="color:#77f">solid blue</strong> for "too low" alerts.</li>
+      <li>The alert clears automatically after <strong>2 minutes</strong> if the value returns to range.</li>
+    </ul>
+    <p>Only one alert is shown at a time. Priority order: Temperature → Humidity → Pressure.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- LED RING -->
+  <section id="led-ring">
+    <div class="section-label">11 — LED Ring</div>
+    <h2>LED Ring Behavior</h2>
+
+    <div class="card card-accent" style="margin-bottom:0.75rem;">
+      <h3 style="margin-top:0; color: var(--accent);">Rainbow (Normal)</h3>
+      <p style="margin-bottom:0;">All 16 LEDs cycle through a smooth rainbow hue rotation. The hue offset shifts by +2 per loop iteration, giving a slow, continuous spin effect.</p>
+    </div>
+    <div class="card card-warn" style="margin-bottom:0.75rem;">
+      <h3 style="margin-top:0; color: #f77;">Solid Red (Too High)</h3>
+      <p style="margin-bottom:0;">All 16 LEDs turn solid red when temperature, humidity, or pressure exceeds the maximum safe threshold.</p>
+    </div>
+    <div class="card card-purple">
+      <h3 style="margin-top:0; color: #77f;">Solid Blue (Too Low)</h3>
+      <p style="margin-bottom:0;">All 16 LEDs turn solid blue when temperature, humidity, or pressure falls below the minimum safe threshold.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SAFE RANGES -->
+  <section id="safe-ranges">
+    <div class="section-label">12 — Reference</div>
+    <h2>Safe Ranges</h2>
+    <p>These ranges are defined in the firmware source. Values outside these ranges trigger visual and LED alerts.</p>
+
+    <div class="range-row">
+      <div class="range-label">Temperature</div>
+      <div class="range-bar-wrap"><div class="range-bar" style="width: 50%;"></div></div>
+      <div class="range-values">18°C – 28°C</div>
+    </div>
+    <div class="range-row">
+      <div class="range-label">Humidity</div>
+      <div class="range-bar-wrap"><div class="range-bar" style="width: 40%;"></div></div>
+      <div class="range-values">30% – 70% RH</div>
+    </div>
+    <div class="range-row">
+      <div class="range-label">Pressure</div>
+      <div class="range-bar-wrap"><div class="range-bar" style="width: 100%;"></div></div>
+      <div class="range-values">950 – 1050 hPa</div>
+    </div>
+
+    <h3>Modifying Ranges</h3>
+    <p>Open the <code>.ino</code> source file and locate these definitions:</p>
+    <pre><span class="kw">#define</span> <span class="def">TEMP_MIN</span>  <span class="val">18</span>
+<span class="kw">#define</span> <span class="def">TEMP_MAX</span>  <span class="val">28</span>
+<span class="kw">#define</span> <span class="def">HUM_MIN</span>   <span class="val">30</span>
+<span class="kw">#define</span> <span class="def">HUM_MAX</span>   <span class="val">70</span>
+<span class="kw">#define</span> <span class="def">PRES_MIN</span>  <span class="val">950</span>
+<span class="kw">#define</span> <span class="def">PRES_MAX</span>  <span class="val">1050</span></pre>
+    <p>Change values, recompile, and flash. If you use the Web Flasher, pre-built binaries use the default ranges above.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PIN MAP -->
+  <section id="pin-map">
+    <div class="section-label">13 — Reference</div>
+    <h2>Complete Pin Map</h2>
+    <table>
+      <thead><tr><th>GP</th><th>Function</th><th>Component</th></tr></thead>
+      <tbody>
+        <tr><td>GP4</td><td>I²C SDA</td><td>AHT20 + BMP280</td></tr>
+        <tr><td>GP5</td><td>I²C SCL</td><td>AHT20 + BMP280</td></tr>
+        <tr><td>GP15</td><td>NeoPixel Data</td><td>16-LED Ring</td></tr>
+        <tr><td>GP16</td><td>TFT RST</td><td>GC9A01A display</td></tr>
+        <tr><td>GP17</td><td>TFT DC</td><td>GC9A01A display</td></tr>
+        <tr><td>GP18</td><td>SPI SCK</td><td>GC9A01A display</td></tr>
+        <tr><td>GP19</td><td>SPI MOSI</td><td>GC9A01A display</td></tr>
+        <tr><td>GP20</td><td>TFT CS</td><td>GC9A01A display</td></tr>
+        <tr><td>GP22</td><td>Touch Input</td><td>Capacitive sensor</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TROUBLESHOOTING -->
+  <section id="troubleshooting">
+    <div class="section-label">14 — Troubleshooting</div>
+    <h2>Troubleshooting</h2>
+
+    <div class="card card-warn" style="margin-bottom:1rem;">
+      <strong style="color:#f5a57a;">Display stays black after flashing</strong>
+      <p style="margin: 0.5rem 0 0; color:#aaa; font-size:14px;">Check TFT wiring. Verify GP18 → SCK, GP19 → MOSI, GP17 → DC, GP16 → RST, GP20 → CS. Ensure the display VCC is on 3.3 V, not 5 V.</p>
+    </div>
+    <div class="card card-warn" style="margin-bottom:1rem;">
+      <strong style="color:#f5a57a;">Sensor shows 0.0 values or freezes</strong>
+      <p style="margin: 0.5rem 0 0; color:#aaa; font-size:14px;">Verify GP4 → SDA and GP5 → SCL. Check that BMP280 SDO is pulled high for address 0x77. Both sensors must share the I²C bus correctly with pull-up resistors (4.7 kΩ to 3.3 V).</p>
+    </div>
+    <div class="card card-warn" style="margin-bottom:1rem;">
+      <strong style="color:#f5a57a;">LEDs do not light up</strong>
+      <p style="margin: 0.5rem 0 0; color:#aaa; font-size:14px;">NeoPixel rings require 5 V on VCC. The Pico's 3.3 V is insufficient for full brightness. Use the VBUS (5 V) pin. Add a 300–500 Ω resistor in series with the data line.</p>
+    </div>
+    <div class="card card-warn" style="margin-bottom:1rem;">
+      <strong style="color:#f5a57a;">Touch sensor not responding</strong>
+      <p style="margin: 0.5rem 0 0; color:#aaa; font-size:14px;">Ensure the sensor output is connected to GP22 and the sensor is powered (3.3 V / GND). Some capacitive modules have a sensitivity trim potentiometer — adjust it for reliable triggering.</p>
+    </div>
+    <div class="card card-warn">
+      <strong style="color:#f5a57a;">Wrong board file flashed</strong>
+      <p style="margin: 0.5rem 0 0; color:#aaa; font-size:14px;">The Pico will likely not boot, or will produce unexpected behavior. Enter BOOTSEL mode again (hold BOOTSEL, plug USB) and reflash the correct variant.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-label">15 — FAQ</div>
+    <h2>Frequently Asked Questions</h2>
+
+    <h3>Can I add more messages?</h3>
+    <p>Yes. Open the source file and find the <code>msgs[]</code> array. Add your strings inside the array and update <code>msgCount</code> to match the new total count.</p>
+
+    <h3>Can I change how often messages appear?</h3>
+    <p>The message timer is randomized between 60 000 and 180 000 ms (1–3 minutes). Find <code>msgDelay = random(60000, 180000);</code> in <code>setup()</code> and <code>loop()</code> and adjust the values.</p>
+
+    <h3>Will PicoHalo work on a Pico 2 with different pinouts?</h3>
+    <p>Yes. The Pico 2 uses the same GP numbering. The firmware is identical except for the board target in Arduino IDE. Select "Raspberry Pi Pico 2" as your board.</p>
+
+    <h3>The alert stays on too long. Can I change it?</h3>
+    <p>The alert duration is 120 000 ms (2 minutes). Find <code>millis() - notificationStart &gt; 120000</code> in <code>drawNotification()</code> and change the value.</p>
+
+    <h3>Is Fahrenheit support different firmware or a config flag?</h3>
+    <p>In the source it's a single <code>#define USE_FAHRENHEIT</code> flag. The Web Flasher packages both as separate pre-compiled binaries so you just pick one — no code editing needed.</p>
+
+    <h3>Can I use a different LED ring size?</h3>
+    <p>Yes. Change <code>#define NUM_LEDS 16</code> to match your ring. The rainbow animation scales automatically.</p>
+  </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <span>PicoHalo User Manual · v1.0 · Open Source</span>
+  <span>
+    <a href="#">GitHub Repository</a> &nbsp;·&nbsp;
+    <a href="#">Web Flasher</a> &nbsp;·&nbsp;
+    <a href="#">Report an Issue</a>
+  </span>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
