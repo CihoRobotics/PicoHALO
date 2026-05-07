@@ -46,6 +46,11 @@ These are the pages:
 
 ---
 
+## 📃 User Manual
+If you want any other informations of this project, you can check the UserManual too; I put it at the files as a .HTML file that named: "PicoHALO_UserManual.HTML"
+
+---
+
 ## 👨‍💻 Author
 
 **CihoRobotics**
