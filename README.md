@@ -20,7 +20,7 @@ This whole project can be done under 15$.
 
 There is two ways to do it:
 1.  -If you are a maker like me, you can go to the "PicohaloUI_CODE_C" or "PicohaloUI_CODE_F" and directly upload that to arduino IDE with libraries and your Raspberry pi board.
-2.  -If you are new to electronics or like easy ways and don't want to work with codes, I've built a WebFlasher just for you, the link is here: -Not yet published-
+2.  -If you are new to electronics or like easy ways and don't want to work with codes, I've built a WebFlasher just for you, the link is here: https://cihorobotics.github.io/PicoHALO-Flasher/
 (You can be comfortable, because it works with all 4 kinds of Rpi Pico devices, Pico, Pico W, Pico 2 and Pico 2W)
 
 ---
