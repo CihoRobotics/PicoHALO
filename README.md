@@ -39,7 +39,14 @@ These are the pages:
 - Face Page that shows you the cute face.
 - Info Page that shows you the infos from the temp, hum and press sensor.
 
+### 📍📌 What is the GPIO pins?
+The GPIO pins are in the User Manual that is in Realeses. 
+Here is the link for the user manual in realeses: https://github.com/CihoRobotics/PicoHALO/releases/tag/v1.0
+
+---
+
 ## 🌡️ What is the ...CODE_C and CODE_F file?
+
 - ...CODE_C file is the file with code for EU and other users who wants to use the temperature as celsius.
 - ...CODE_F flie is the file with code for USA and other users who wants to use the temperature as fahrenheit.
 - (Both of the files are the same, has the same features, pins, etc, just the temp is C or F)
